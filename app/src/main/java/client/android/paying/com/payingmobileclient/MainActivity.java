@@ -1,11 +1,13 @@
 package client.android.paying.com.payingmobileclient;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
-import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -13,28 +15,42 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 
-public class MainActivity extends Activity implements WifiP2pManager.ChannelListener, WifiP2pManager.PeerListListener {
+import fragment.AccountFragment;
+import fragment.MainFragment;
+
+public class MainActivity extends Activity implements WifiP2pManager.ChannelListener, WifiP2pManager.PeerListListener, ActionBar.TabListener {
 
     public static final String TAG = "wifidirectdemo";
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
     private WifiP2pDevice device;
     ProgressDialog progressDialog;
-
-
     private BroadcastReceiver receiver = null;
-
     private final IntentFilter intentFilter = new IntentFilter();
+    AccountFragment accountFragment = null;
+    MainFragment mainFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActionBar bar = getActionBar();
+        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        ActionBar.Tab tab = bar.newTab();
+        tab.setText("Ana Sayfa");
+        tab.setTabListener(this);
+        bar.addTab(tab);
+
+        ActionBar.Tab tab2 = bar.newTab();
+        tab2.setText("Hesaplar-Kartlar");
+        tab2.setTabListener(this);
+        bar.addTab(tab2);
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -43,6 +59,21 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
 
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
+
+        manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                Toast.makeText(MainActivity.this, "Discovery Initiated",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int reasonCode) {
+                Toast.makeText(MainActivity.this, "Discovery Failed : " + reasonCode,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -52,6 +83,7 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
         registerReceiver(receiver, intentFilter);
     }
 
+    /*
     public void onClickDiscover(View view) {
 
         progressDialog = ProgressDialog.show(MainActivity.this, "on Click Discover",
@@ -79,7 +111,7 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
             }
         });
 
-    }
+    }*/
 
 
     @Override
@@ -89,6 +121,7 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
         return true;
     }
 
+    /*
     public void onClickConnect(View view) {
 
         if(device != null) {
@@ -116,6 +149,8 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
         }
     }
 
+
+
     public void onClickStartServer(View view) {
 
 
@@ -138,7 +173,7 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
             }
         });
 
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -175,15 +210,38 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
 
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peers) {
-
-
         Toast.makeText(MainActivity.this, "askdfhaskdjhf", Toast.LENGTH_SHORT).show();
         if(peers.getDeviceList().size() > 0) {
             Toast.makeText(MainActivity.this, "onPeersAvailable", Toast.LENGTH_SHORT).show();
             device = (WifiP2pDevice)peers.getDeviceList().toArray()[0];
+            mainFragment.populateDeviceList(new ArrayList(peers.getDeviceList()));
         }
         if(progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+    }
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+        if(tab.getPosition() == 0){
+            if(mainFragment == null)
+                mainFragment = new MainFragment();
+            ft.replace(android.R.id.content, mainFragment);
+        }
+        else{
+            if(accountFragment == null)
+                accountFragment = new AccountFragment();
+            ft.replace(android.R.id.content, accountFragment);
+        }
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
     }
 }
