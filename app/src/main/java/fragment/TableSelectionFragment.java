@@ -3,23 +3,21 @@ package fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import client.android.paying.com.payingmobileclient.MainActivity;
 import client.android.paying.com.payingmobileclient.R;
+import core.PayingClient;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TableSelectionFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TableSelectionFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
+
 public class TableSelectionFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,6 +29,9 @@ public class TableSelectionFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private Button button;
+    private EditText tableNumberEditText;
 
     /**
      * Use this factory method to create a new instance of
@@ -66,7 +67,21 @@ public class TableSelectionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_table_selection, container, false);
+        View view = inflater.inflate(R.layout.fragment_table_selection, container, false);
+        button = (Button)view.findViewById(R.id.askBill);
+        tableNumberEditText = (EditText)view.findViewById(R.id.tableNumber);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new SendRequestAsyncTask(activity, "192.168.49.1", 9293, tableNumberEditText.getText().toString()).execute();
+            }
+        });
     }
 
     @Override
@@ -74,6 +89,42 @@ public class TableSelectionFragment extends Fragment {
         super.onAttach(activity);
         this.activity = activity;
 
+    }
+
+    class SendRequestAsyncTask extends AsyncTask<Void, Void, String> {
+
+        private Context context;
+        private String ip;
+        private int port;
+        private String message;
+
+        public SendRequestAsyncTask(Context context, String ip, int port, String message) {
+
+            this.context = context;
+            this.port = port;
+            this.ip = ip;
+            this.message = message;
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+            Toast.makeText(context, "Client starting", Toast.LENGTH_SHORT).show();
+
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            return PayingClient.sendRequest(ip, port, message);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(context, "Response is: " + s, Toast.LENGTH_SHORT).show();
+        }
     }
 
 
