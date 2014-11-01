@@ -8,11 +8,14 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -21,8 +24,9 @@ import java.util.ArrayList;
 
 import fragment.AccountFragment;
 import fragment.MainFragment;
+import fragment.TableSelectionFragment;
 
-public class MainActivity extends Activity implements WifiP2pManager.ChannelListener, WifiP2pManager.PeerListListener, ActionBar.TabListener {
+public class MainActivity extends Activity implements WifiP2pManager.ChannelListener, WifiP2pManager.PeerListListener, ActionBar.TabListener{
 
     public static final String TAG = "wifidirectdemo";
     private WifiP2pManager manager;
@@ -74,6 +78,7 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
                         Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     @Override
@@ -83,36 +88,11 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
         registerReceiver(receiver, intentFilter);
     }
 
-    /*
-    public void onClickDiscover(View view) {
-
-        progressDialog = ProgressDialog.show(MainActivity.this, "on Click Discover",
-                "nothing", true, true
-                //                        new DialogInterface.OnCancelListener() {
-                //
-                //                            @Override
-                //                            public void onCancel(DialogInterface dialog) {
-                //                                ((DeviceActionListener) getActivity()).cancelDisconnect();
-                //                            }
-                //                        }
-        );
-        manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-
-            @Override
-            public void onSuccess() {
-                Toast.makeText(MainActivity.this, "Discovery Initiated",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(int reasonCode) {
-                Toast.makeText(MainActivity.this, "Discovery Failed : " + reasonCode,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }*/
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -120,60 +100,6 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
-    /*
-    public void onClickConnect(View view) {
-
-        if(device != null) {
-
-
-            WifiP2pConfig config = new WifiP2pConfig();
-            config.deviceAddress = device.deviceAddress;
-            config.wps.setup = WpsInfo.PBC;
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-            progressDialog = ProgressDialog.show(MainActivity.this, "Press back to cancel",
-                    "Connecting to :" + device.deviceAddress, true, true
-                    //                        new DialogInterface.OnCancelListener() {
-                    //
-                    //                            @Override
-                    //                            public void onCancel(DialogInterface dialog) {
-                    //                                ((DeviceActionListener) getActivity()).cancelDisconnect();
-                    //                            }
-                    //                        }
-            );
-            connect(config);
-        } else {
-            Toast.makeText(MainActivity.this, "Device is null", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-
-    public void onClickStartServer(View view) {
-
-
-        manager.createGroup(channel, new WifiP2pManager.ActionListener() {
-
-            @Override
-            public void onSuccess() {
-                // TODO Auto-generated method stub
-
-                Toast.makeText(MainActivity.this, "Create Group on Success",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(int reason) {
-                // TODO Auto-generated method stub
-
-                Toast.makeText(MainActivity.this, "Create Group on Fail",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -192,21 +118,6 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
 
     }
 
-    public void connect(WifiP2pConfig config) {
-        manager.connect(channel, config, new WifiP2pManager.ActionListener() {
-
-            @Override
-            public void onSuccess() {
-                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
-            }
-
-            @Override
-            public void onFailure(int reason) {
-                Toast.makeText(MainActivity.this, "Connect failed. Retry.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peers) {
@@ -234,6 +145,42 @@ public class MainActivity extends Activity implements WifiP2pManager.ChannelList
                 accountFragment = new AccountFragment();
             ft.replace(android.R.id.content, accountFragment);
         }
+    }
+
+    public void connectToDevice(WifiP2pDevice deviceToConnect) {
+
+        Log.d(TAG, "connect-to-device in main activity");
+
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = deviceToConnect.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+
+        manager.connect(channel, config, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                Toast.makeText(MainActivity.this, "on connect", Toast.LENGTH_SHORT).show();
+                initiateTableSelectionFragment();
+                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                Toast.makeText(MainActivity.this, "Connect failed. Retry.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    public void initiateTableSelectionFragment() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+// Commit the transaction
+        transaction.replace(android.R.id.content, TableSelectionFragment.newInstance("1","2"));
+        transaction.addToBackStack("nice");
+
+        transaction.commit();
     }
 
     @Override

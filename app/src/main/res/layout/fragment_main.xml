@@ -5,11 +5,6 @@
     android:orientation="vertical"
     tools:context="fragment.MainFragment">
 
-    <SearchView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/searchView" />
-
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

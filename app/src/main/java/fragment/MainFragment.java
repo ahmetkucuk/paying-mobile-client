@@ -7,9 +7,11 @@ import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import client.android.paying.com.payingmobileclient.MainActivity;
 import client.android.paying.com.payingmobileclient.R;
 
 
@@ -24,6 +27,7 @@ public class MainFragment extends Fragment {
 
     private Activity activity;
     private ListView listView;
+    private static final String TAG = "MainFragment";
 
     public MainFragment() {
         // Required empty public constructor
@@ -52,6 +56,23 @@ public class MainFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         listView = (ListView) view.findViewById(R.id.deviceList);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                connectToDevice((WifiP2pDevice)parent.getAdapter().getItem(position));
+            }
+        });
+    }
+
+    private void connectToDevice(WifiP2pDevice deviceToConnect) {
+        Log.d(TAG, "connect-to-device");
+        ((MainActivity)activity).connectToDevice(deviceToConnect);
+
     }
 
     private class DeviceListAdapter extends ArrayAdapter<WifiP2pDevice>{
