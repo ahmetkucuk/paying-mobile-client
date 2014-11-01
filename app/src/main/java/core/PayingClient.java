@@ -1,5 +1,9 @@
 package core;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -12,7 +16,7 @@ import java.net.Socket;
  * Created by ahmetkucuk on 01/11/14.
  */public class PayingClient {
     public static String sendRequest(String host, int port, String req){
-
+        Gson gson = new GsonBuilder().create();
         /** Define a host server */
         /** Define a port */
 
@@ -38,7 +42,12 @@ import java.net.Socket;
              * character encoding.
              */
             OutputStreamWriter osw = new OutputStreamWriter(bos, "UTF-8");
-            String process = req + (char) 13;
+            JsonObject request = new JsonObject();
+            request.addProperty("tableid",req);
+            request.addProperty("type",1);
+            System.out.println(gson.toJson(request));
+            String process = gson.toJson(request) + (char) 13;
+
 
             /** Write across the socket connection and flush the buffer */
             System.out.println("Test 5");
