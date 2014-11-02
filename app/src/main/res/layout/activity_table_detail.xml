@@ -74,13 +74,21 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/amount_tablelayout">
+        android:layout_below="@id/amount_tablelayout"
+        android:orientation="vertical">
 
+        <TextView
+            android:layout_width="wrap_content"
+            style="@style/headerStyle"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:text="@string/item_list_header" />
 
         <ListView
             android:id="@+id/items_list_view"
             android:layout_width="fill_parent"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:layout_height="wrap_content">
 
         </ListView>
@@ -90,24 +98,26 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:text="Odenecek Tutar"
-                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/amount_to_pay"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/activity_vertical_margin"
+                android:hint="@string/enter_amount_to_pay"
                 android:inputType="number" />
 
         </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/headerStyle"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:text="@string/pick_a_card" />
 
         <ListView
             android:id="@+id/credit_cards_listview"

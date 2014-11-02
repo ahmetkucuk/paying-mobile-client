@@ -12,6 +12,8 @@ public class Constants {
     public static final String SERVER_IP = "192.168.49.1";
     public static final int SERVER_PORT = 2125;
 
+    public static final String RESTAURANT_NAME = "RESTAURANT_NAME";
+
     public static final String SERVER_RESPONSE_SUCCESS = "SUCCESS";
     public static final String SERVER_RESPONSE_FAIL = "FAIL";
 }

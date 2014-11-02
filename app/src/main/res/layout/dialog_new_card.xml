@@ -71,6 +71,7 @@
                 android:id="@+id/expire_date_edittext_1"
                 android:layout_width="0dp"
                 android:inputType="number"
+                android:maxLength="2"
                 android:layout_height="wrap_content"
                 android:layout_weight="25" />
             <TextView
@@ -83,6 +84,7 @@
                 android:id="@+id/expire_date_edittext_2"
                 android:layout_width="0dp"
                 android:inputType="number"
+                android:maxLength="2"
                 android:layout_height="wrap_content"
                 android:layout_weight="25" />
 

@@ -34,6 +34,7 @@ import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import core.Constants;
 import fragment.AccountFragment;
 import fragment.MainFragment;
 import fragment.TableSelectionFragment;
@@ -122,14 +123,13 @@ public class TabActivity extends Activity implements ActionBar.TabListener, Wifi
 
             @Override
             public void onSuccess() {
-                Toast.makeText(TabActivity.this, "Discovery Initiated",
-                        Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "discover-peers-on-success");
             }
 
             @Override
             public void onFailure(int reasonCode) {
-                Toast.makeText(TabActivity.this, "Discovery Failed : " + reasonCode,
-                        Toast.LENGTH_SHORT).show();
+
+                Log.e(TAG, "discover-peers-on-fail");
             }
         });
 
@@ -170,9 +170,7 @@ public class TabActivity extends Activity implements ActionBar.TabListener, Wifi
 
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peers) {
-        Toast.makeText(TabActivity.this, "askdfhaskdjhf", Toast.LENGTH_SHORT).show();
         if(peers.getDeviceList().size() > 0) {
-            Toast.makeText(TabActivity.this, "onPeersAvailable", Toast.LENGTH_SHORT).show();
             device = (WifiP2pDevice)peers.getDeviceList().toArray()[0];
 
             mainFragment.populateDeviceList(new ArrayList(peers.getDeviceList()));
@@ -182,7 +180,7 @@ public class TabActivity extends Activity implements ActionBar.TabListener, Wifi
         }
     }
 
-    public void connectToDevice(WifiP2pDevice deviceToConnect) {
+    public void connectToDevice(final WifiP2pDevice deviceToConnect) {
 
         Log.d(TAG, "connect-to-device in main activity");
 
@@ -192,32 +190,24 @@ public class TabActivity extends Activity implements ActionBar.TabListener, Wifi
 
         manager.connect(channel, config, new WifiP2pManager.ActionListener() {
 
+
             @Override
             public void onSuccess() {
-                Toast.makeText(TabActivity.this, "on connect", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(TabActivity.this, getResources().getString(R.string.connected), Toast.LENGTH_SHORT).show();
                 Intent tableSelectionIntent = new Intent(TabActivity.this, TableSelectionActivity.class);
+                tableSelectionIntent.putExtra(Constants.RESTAURANT_NAME, deviceToConnect.deviceName);
                 startActivity(tableSelectionIntent);
-                //initiateTableSelectionFragment();
-                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+                Log.e(TAG, "connect-on-success");
             }
 
             @Override
-            public void onFailure(int reason) {
-                Toast.makeText(TabActivity.this, "Connect failed. Retry.",
-                        Toast.LENGTH_SHORT).show();
+            public void onFailure(int reasonCode) {
+
+                Log.e(TAG, "connect-on-fail");
             }
         });
 
-    }
-
-    public void initiateTableSelectionFragment() {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-// Commit the transaction
-        transaction.replace(android.R.id.content, TableSelectionFragment.newInstance("1", "2"));
-        transaction.addToBackStack("nice");
-
-        transaction.commit();
     }
 
 
@@ -237,6 +227,23 @@ public class TabActivity extends Activity implements ActionBar.TabListener, Wifi
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        }
+        if(id == R.id.action_refresh) {
+
+            manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+
+                @Override
+                public void onSuccess() {
+                    Log.e(TAG, "discover-peers-on-success");
+                }
+
+                @Override
+                public void onFailure(int reasonCode) {
+
+                    Log.e(TAG, "discover-peers-on-fail");
+                }
+            });
+            mainFragment.onDiscoveryStart();
         }
         return super.onOptionsItemSelected(item);
     }

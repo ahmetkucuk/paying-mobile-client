@@ -16,7 +16,7 @@ public class CreditCardHolder {
     private static CreditCardHolder instance = new CreditCardHolder();
 
     private CreditCardHolder() {
-        creditCardList.add(new CreditCard("12312412312", "ahmet kucuk", "1119", "700", "Ing Bank"));
+        creditCardList.add(new CreditCard("46087717752", "Ahmet", "0611", "238", "Ing Bank"));
         creditCardList.add(new CreditCard("43214325232", "alper cem", "23119", "700", "Ing Bank"));
     }
 

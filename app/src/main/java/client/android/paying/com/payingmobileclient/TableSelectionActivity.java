@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -23,7 +24,9 @@ import core.PayingClient;
 public class TableSelectionActivity extends Activity {
 
     private Button button;
+    private TextView welcomeMessage;
     private EditText tableNumberEditText;
+    private String restaurantName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,17 @@ public class TableSelectionActivity extends Activity {
         setContentView(R.layout.fragment_table_selection);
         button = (Button)findViewById(R.id.askBill);
         tableNumberEditText = (EditText)findViewById(R.id.tableNumber);
+        welcomeMessage = (TextView)findViewById(R.id.welcome_message);
+
+
+        if(getIntent().hasExtra(Constants.RESTAURANT_NAME)) {
+            restaurantName = getIntent().getExtras().getString(Constants.RESTAURANT_NAME);
+            getActionBar().setTitle(restaurantName);
+        }
+
+        welcomeMessage.setText(String.format(getResources().getString(R.string.welcome_to_restaurant), restaurantName+"'a"));
+
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,8 +73,6 @@ public class TableSelectionActivity extends Activity {
 
         @Override
         protected void onPreExecute() {
-
-            Toast.makeText(context, "Client starting", Toast.LENGTH_SHORT).show();
 
             super.onPreExecute();
         }

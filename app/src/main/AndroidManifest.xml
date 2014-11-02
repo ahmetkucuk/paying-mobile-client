@@ -39,6 +39,7 @@
         </activity>
         <activity
             android:name=".TableSelectionActivity"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/title_activity_table_selection"
             android:screenOrientation="portrait">
         </activity>

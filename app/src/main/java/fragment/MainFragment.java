@@ -1,6 +1,7 @@
 package fragment;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothClass;
 import android.content.Context;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class MainFragment extends Fragment {
     private Activity activity;
     private ListView listView;
     private static final String TAG = "MainFragment";
+    private ProgressBar progressBar;
 
     public MainFragment() {
         // Required empty public constructor
@@ -49,8 +52,13 @@ public class MainFragment extends Fragment {
     }
 
     public void populateDeviceList(ArrayList<WifiP2pDevice> devices){
-        DeviceListAdapter adapter = new DeviceListAdapter(activity,devices);
-        listView.setAdapter(adapter);
+        progressBar.setVisibility(View.GONE);
+        listView.setAdapter(new DeviceListAdapter(activity,devices));
+    }
+
+    public void onDiscoveryStart() {
+        progressBar.setVisibility(View.VISIBLE);
+        listView.setAdapter(new DeviceListAdapter(activity, new ArrayList<WifiP2pDevice>()));
     }
 
     @Override
@@ -65,6 +73,7 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         listView = (ListView) view.findViewById(R.id.deviceList);
+        progressBar = (ProgressBar)view.findViewById(R.id.progress_bar_main_fragment);
         return view;
     }
 

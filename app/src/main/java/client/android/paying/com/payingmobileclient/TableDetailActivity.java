@@ -45,6 +45,8 @@ public class TableDetailActivity extends Activity {
     private TextView paidTextView;
     private TextView tobePaidTextView;
     private double amountToPay;
+    private double totalAmount;
+    private double paidAmount;
     private CreditCard creditCard;
     private ListView creditCardListView;
     private ListView itemListView;
@@ -67,19 +69,23 @@ public class TableDetailActivity extends Activity {
 
             tableDetailJson = getIntent().getExtras().getString(Constants.TABLE_DETAIL_JSON_STRING);
             Table table = new Gson().fromJson(tableDetailJson, Table.class);
-            System.out.println("TAble Detail: " + tableDetailJson);
+            System.out.println("Table Detail: " + tableDetailJson);
 
             Type collectionType = new TypeToken<List<Item>>(){}.getType();
             JsonObject element = (JsonObject)new JsonParser().parse(tableDetailJson);
             List<Item> items = new Gson().fromJson(element.getAsJsonArray("nameQuantityPriceList"), collectionType);
             table.setItemList(items);
 
+            totalAmount = table.getTotalAmount();
+            paidAmount = table.getPaidAmount();
+
             tableId = table.getId();
-            amountTextView.setText(table.getTotalAmount() + "");
-            paidTextView.setText(table.getPaidAmount() + "");
+            amountTextView.setText(totalAmount + " TL");
+            paidTextView.setText(paidAmount + " TL");
 
             System.out.println(table.toString());
             getActionBar().setTitle("Masa - " + table.getId());
+            tobePaidTextView.setText((totalAmount - paidAmount) + " TL");
 
             itemListView.setAdapter(new ItemListViewAdapter(TableDetailActivity.this, R.layout.item_list_view, table.getItemList()));
 
@@ -90,6 +96,12 @@ public class TableDetailActivity extends Activity {
         creditCardListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                if(amountToPayEditText.getText().length() == 0) {
+                    Toast.makeText(TableDetailActivity.this, getResources().getString(R.string.alert_amount_field), Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 amountToPay = Double.valueOf(amountToPayEditText.getText().toString());
                 CreditCard selectedCreditCard = (CreditCard)parent.getAdapter().getItem(position);
@@ -119,7 +131,6 @@ public class TableDetailActivity extends Activity {
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String value = input.getText().toString();
-                Toast.makeText(TableDetailActivity.this, value, Toast.LENGTH_SHORT).show();
                 new SendAmountRequestAsyncTask(TableDetailActivity.this, Constants.SERVER_IP, Constants.SERVER_PORT,requestJson).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
@@ -185,7 +196,6 @@ public class TableDetailActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Toast.makeText(context, "Client starting", Toast.LENGTH_SHORT).show();
             HelperFunctions.showProgressBar(TableDetailActivity.this, "sending request");
 
         }
@@ -200,10 +210,13 @@ public class TableDetailActivity extends Activity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if(s.equalsIgnoreCase(Constants.SERVER_RESPONSE_SUCCESS)) {
-                Toast.makeText(TableDetailActivity.this, "Basarili", Toast.LENGTH_SHORT).show();
+
+                paidTextView.setText((paidAmount+amountToPay) + " TL");
+                tobePaidTextView.setText((totalAmount - (paidAmount+amountToPay)) + " TL");
+                Toast.makeText(TableDetailActivity.this, getResources().getString(R.string.successful_pay), Toast.LENGTH_SHORT).show();
 
             } else {
-                Toast.makeText(TableDetailActivity.this, s, Toast.LENGTH_SHORT).show();
+                Toast.makeText(TableDetailActivity.this, getResources().getString(R.string.error_message), Toast.LENGTH_SHORT).show();
             }
             HelperFunctions.hideProgressDialog();
         }

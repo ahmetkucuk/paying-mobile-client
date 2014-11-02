@@ -16,16 +16,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textSize="24sp"
+            android:textSize="36sp"
             android:textStyle="bold"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/hello_blank_fragment" />
+            android:layout_margin="@dimen/activity_vertical_margin"
+            android:textColor="@color/ing_color"
+            android:gravity="center_horizontal"
+            android:id="@+id/welcome_message"
+            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:id="@+id/tableNumber"
             android:layout_width="fill_parent"
             android:inputType="number"
             android:layout_height="wrap_content"
+            android:hint="@string/hello_blank_fragment"
             android:layout_margin="@dimen/activity_vertical_margin" />
 
         <Button
@@ -34,7 +38,7 @@
             android:layout_gravity="center_horizontal"
             android:id="@+id/askBill"
             style="@style/buttonStyle"
-            android:text="Hesabı iste" />
+            android:text="@string/ask_for_bill" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -125,24 +125,4 @@ public class AccountFragment extends Fragment {
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
     }
 
-    public static void colorAlertDialogTitle(Dialog dialog, int color) {
-        int dividerId = dialog.getContext().getResources().getIdentifier("android:id/titleDivider", null, null);
-        if (dividerId != 0) {
-            View divider = dialog.findViewById(dividerId);
-            divider.setBackgroundColor(color);
-        }
-
-        int textViewId = dialog.getContext().getResources().getIdentifier("android:id/alertTitle", null, null);
-        if (textViewId != 0) {
-            TextView tv = (TextView) dialog.findViewById(textViewId);
-            tv.setTextColor(color);
-        }
-
-        int iconId = dialog.getContext().getResources().getIdentifier("android:id/icon", null, null);
-        if (iconId != 0) {
-            ImageView icon = (ImageView) dialog.findViewById(iconId);
-            icon.setColorFilter(color);
-        }
-    }
-
 }

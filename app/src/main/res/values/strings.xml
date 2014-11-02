@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PayingMobileClient</string>
+    <string name="app_name">PayING</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_blank_fragment">Masa Numaranızı Giriniz:</string>
+    <string name="action_settings">Ayarlar</string>
+    <string name="action_refresh">Tara</string>
+    <string name="hello_blank_fragment">Masa Numaranızı Giriniz</string>
+    <string name="welcome_to_restaurant">%s Hoşgeldiniz</string>
     <string name="title_activity_tab">TabActivity</string>
     <string name="title_section1">Restoranlar</string>
     <string name="title_section2">Kartlar</string>
@@ -12,7 +14,7 @@
     <string name="title_activity_table_selection">TableSelectionActivity</string>
     <string name="title_activity_select_credit_card">SelectCreditCardActivity</string>
     <string name="title_activity_credit_card_select">CreditCardSelectActivity</string>
-    <string name="enter_pin_alert">Ödenecek tutar: %f \nOnaylamak için şifrenizi giriniz.</string>
+    <string name="enter_pin_alert">Ödenecek tutar: %.2f \nOnaylamak için şifrenizi giriniz.</string>
     <string name="pin">Şifre</string>
     <string name="error_message">Üzgünüz, bir hata oluştu.</string>
     <string name="card_owner_name">Kart Sahibi</string>
@@ -20,5 +22,15 @@
     <string name="expire_date">Son Kullanma Tarihi</string>
     <string name="add_card">Kartı Ekle</string>
     <string name="add_new_card_dialog_title">Yeni Kart Ekleme</string>
+    <string name="connected">Bağlandı</string>
+    <string name="amount">Tutar: </string>
+    <string name="amount_paid">Ödenen: </string>
+    <string name="amount_to_be_paid">Kalan: </string>
+    <string name="item_list_header">Siparişler: </string>
+    <string name="enter_amount_to_pay">Ödemek istediğiniz miktar</string>
+    <string name="pick_a_card">Bir kredi kartı seçiniz:</string>
+    <string name="successful_pay">Ödemeniz Başarılı</string>
+    <string name="ask_for_bill">Hesabı İste</string>
+    <string name="alert_amount_field">Lütfen miktarı giriniz</string>
 
 </resources>

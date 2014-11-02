@@ -56,8 +56,8 @@ public class ItemListViewAdapter extends ArrayAdapter<Item> {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.itemName.setText(values.get(position).getName());
-        holder.itemQuantity.setText(values.get(position).getQuantity() + "");
-        holder.itemPrice.setText(values.get(position).getPrice() + "");
+        holder.itemQuantity.setText("X " + values.get(position).getQuantity() + "");
+        holder.itemPrice.setText(values.get(position).getPrice() + " TL");
 
         return convertView;
     }
