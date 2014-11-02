@@ -1,31 +1,55 @@
 package fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import adapters.CreditCardListViewAdapter;
 import client.android.paying.com.payingmobileclient.R;
+import core.CreditCardHolder;
 import models.CreditCard;
 
 public class AccountFragment extends Fragment {
 
     private ListView creditCardListView;
     private Context activity;
+    private Button addNewCard;
+
+    List<CreditCard> creditCardList;
 
     public AccountFragment() {
         // Required empty public constructor
+    }
+
+    private static final String ARG_SECTION_NUMBER = "section_number";
+
+    public static AccountFragment newInstance(int sectionNumber) {
+        AccountFragment fragment = new AccountFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -38,7 +62,9 @@ public class AccountFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_account, container, false);
-        creditCardListView = (ListView) creditCardListView.findViewById(R.id.cardList);
+        creditCardListView = (ListView) view.findViewById(R.id.cardList);
+        addNewCard = (Button)view.findViewById(R.id.addNewAccount);
+
         return view;
     }
 
@@ -51,55 +77,72 @@ public class AccountFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        List<CreditCard> creditCardList = new ArrayList<CreditCard>();
+        creditCardList = CreditCardHolder.getInstance().getCreditCardList();
         creditCardListView.setAdapter(new CreditCardListViewAdapter(activity, R.layout.creditcard_listview_layout, creditCardList));
-    }
-
-    class CreditCardListViewAdapter extends ArrayAdapter<CreditCard> {
-        private Context context;
-        private List<CreditCard> values;
-        private int resourceId;
-
-        public CreditCardListViewAdapter(Context context, int resourceId, List<CreditCard> objects) {
-            super(context, resourceId, objects);
-            this.resourceId = resourceId;
-            // TODO Auto-generated constructor stub
-            this.context = context;
-            this.values = objects;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            ViewHolder holder;
-
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) context
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(resourceId, parent, false);
-
-                final TextView creditCardName = (TextView) convertView
-                        .findViewById(R.id.credit_card_name);
-
-                holder = new ViewHolder(creditCardName);
-
-                convertView.setTag(holder);
-
-            } else {
-                holder = (ViewHolder) convertView.getTag();
+        addNewCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAddCardDialog();
             }
-            return super.getView(position, convertView, parent);
-        }
+        });
+//
+//        creditCardListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//        });
     }
 
-    static class ViewHolder {
+    public void showAddCardDialog() {
+        final Dialog dialog = new Dialog(activity);
+        dialog.setContentView(R.layout.dialog_new_card);
+        dialog.setTitle(getResources().getString(R.string.add_new_card_dialog_title));
+        //colorAlertDialogTitle(dialog, Color.RED);
 
-        public final TextView creditCardName;
+        final EditText cardNumberEditText = (EditText)dialog.findViewById(R.id.card_number_edittext);
+        final EditText cardOwnerEditText = (EditText)dialog.findViewById(R.id.card_owner_edittext);
+        final EditText cardExpireDate1 = (EditText)dialog.findViewById(R.id.expire_date_edittext_1);
+        final EditText cardExpireDate2 = (EditText)dialog.findViewById(R.id.expire_date_edittext_2);
 
-        public ViewHolder(TextView creditCardName) {
-            this.creditCardName = creditCardName;
-        }
+        Button addButton = (Button)dialog.findViewById(R.id.add_card_dialog_button);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String cardNumber = cardNumberEditText.getText().toString();
+                String cardOwnerName = cardOwnerEditText.getText().toString();
+                String expireDate = cardExpireDate1.getText().toString() + cardExpireDate2.getText().toString();
+                CreditCardHolder.getInstance().addCreditCard(new CreditCard(cardNumber,cardOwnerName,expireDate,"none", "ING"));
+                creditCardList = CreditCardHolder.getInstance().getCreditCardList();
+                creditCardListView.setAdapter(new CreditCardListViewAdapter(activity, R.layout.creditcard_listview_layout, creditCardList));
+                dialog.dismiss();
+            }
+        });
+
+
+        dialog.show();
+        Window window = dialog.getWindow();
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
     }
 
+    public static void colorAlertDialogTitle(Dialog dialog, int color) {
+        int dividerId = dialog.getContext().getResources().getIdentifier("android:id/titleDivider", null, null);
+        if (dividerId != 0) {
+            View divider = dialog.findViewById(dividerId);
+            divider.setBackgroundColor(color);
+        }
+
+        int textViewId = dialog.getContext().getResources().getIdentifier("android:id/alertTitle", null, null);
+        if (textViewId != 0) {
+            TextView tv = (TextView) dialog.findViewById(textViewId);
+            tv.setTextColor(color);
+        }
+
+        int iconId = dialog.getContext().getResources().getIdentifier("android:id/icon", null, null);
+        if (iconId != 0) {
+            ImageView icon = (ImageView) dialog.findViewById(iconId);
+            icon.setColorFilter(color);
+        }
+    }
 
 }

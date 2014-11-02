@@ -5,4 +5,24 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="buttonStyle">
+
+        <item name="android:background">@drawable/custom_button_selector</item>
+        <item name="android:textColor">@android:color/white</item>
+
+    </style>
+
+    <!-- the theme applied to the application or activity -->
+    <style name="CustomActionBarTheme"
+        parent="android:Theme.Holo">
+        <item name="android:actionBarTabStyle">@style/MyActionBarTabs</item>
+    </style>
+
+    <!-- ActionBar tabs styles -->
+    <style name="MyActionBarTabs"
+        parent="android:Widget.Holo.ActionBar.TabView">
+        <!-- tab indicator -->
+        <item name="android:background">#abc</item>
+    </style>
+
 </resources>

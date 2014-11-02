@@ -2,6 +2,7 @@ package fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,8 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import client.android.paying.com.payingmobileclient.MainActivity;
 import client.android.paying.com.payingmobileclient.R;
+import client.android.paying.com.payingmobileclient.TableDetailActivity;
+import core.Constants;
 import core.PayingClient;
 
 
@@ -79,7 +81,7 @@ public class TableSelectionFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SendRequestAsyncTask(activity, "192.168.49.1", 9293, tableNumberEditText.getText().toString()).execute();
+                new SendRequestAsyncTask(activity, Constants.SERVER_IP, Constants.SERVER_PORT, tableNumberEditText.getText().toString()).execute();
             }
         });
     }
@@ -123,6 +125,9 @@ public class TableSelectionFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            Intent tableDetailIntent = new Intent(activity, TableDetailActivity.class);
+            tableDetailIntent.putExtra(Constants.TABLE_DETAIL_JSON_STRING, s);
+            startActivity(tableDetailIntent);
             Toast.makeText(context, "Response is: " + s, Toast.LENGTH_SHORT).show();
         }
     }

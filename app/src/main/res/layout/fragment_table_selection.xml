@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:id="@+id/askBill"
+            style="@style/buttonStyle"
             android:text="Hesabı iste" />
     </LinearLayout>
 

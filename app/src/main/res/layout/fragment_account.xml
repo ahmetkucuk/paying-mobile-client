@@ -2,22 +2,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="fragment.AccountFragment">
 
-    <ListView
-        android:layout_width="wrap_content"
+    <Button
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/accountList"></ListView>
+        android:text="Yeni Kart Ekle"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        style="@style/buttonStyle"
+        android:id="@+id/addNewAccount"/>
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:id="@+id/cardList"></ListView>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/addNewAccount"/>
 
 </LinearLayout>

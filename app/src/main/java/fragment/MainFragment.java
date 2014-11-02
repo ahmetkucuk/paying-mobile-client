@@ -19,8 +19,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import client.android.paying.com.payingmobileclient.MainActivity;
 import client.android.paying.com.payingmobileclient.R;
+import client.android.paying.com.payingmobileclient.TabActivity;
 
 
 public class MainFragment extends Fragment {
@@ -31,6 +31,16 @@ public class MainFragment extends Fragment {
 
     public MainFragment() {
         // Required empty public constructor
+    }
+
+    private static final String ARG_SECTION_NUMBER = "section_number";
+
+    public static MainFragment newInstance(int sectionNumber) {
+        MainFragment fragment = new MainFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -71,7 +81,7 @@ public class MainFragment extends Fragment {
 
     private void connectToDevice(WifiP2pDevice deviceToConnect) {
         Log.d(TAG, "connect-to-device");
-        ((MainActivity)activity).connectToDevice(deviceToConnect);
+        ((TabActivity)activity).connectToDevice(deviceToConnect);
 
     }
 

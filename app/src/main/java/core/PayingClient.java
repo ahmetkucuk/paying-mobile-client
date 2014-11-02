@@ -24,29 +24,14 @@ import java.net.Socket;
         String TimeStamp;
         System.out.println("SocketClient initialized");
         try {
-            /** Obtain an address object of the server */
-            //InetAddress address = InetAddress.getByName(host);
-            System.out.println("Test 1");
             InetAddress address = InetAddress.getLocalHost();
-            /** Establish a socket connetion */
-            System.out.println("Test 2");
             Socket connection = new Socket(host, port);
-            System.out.println("Test 3");
-            /** Instantiate a BufferedOutputStream object */
             BufferedOutputStream bos = new BufferedOutputStream(
                     connection.getOutputStream());
-            System.out.println("Test 4");
-
-            /**
-             * Instantiate an OutputStreamWriter object with the optional
-             * character encoding.
-             */
             OutputStreamWriter osw = new OutputStreamWriter(bos, "UTF-8");
             JsonObject request = new JsonObject();
-            request.addProperty("tableid",req);
-            request.addProperty("type",1);
             System.out.println(gson.toJson(request));
-            String process = gson.toJson(request) + (char) 13;
+            String process = req + (char) 13;
 
 
             /** Write across the socket connection and flush the buffer */
